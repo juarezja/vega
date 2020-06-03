@@ -12,8 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { VehicleFormComponent } from './vehicle-form/vehicle-form.component';
 
-import { FeatureService } from './Services/feature.service';
-import { MakeService } from './Services/make.service';
+import { VehicleService } from './Services/vehicle.service';
 
 @NgModule({
   declarations: [
@@ -37,8 +36,7 @@ import { MakeService } from './Services/make.service';
     ])
   ],
   providers: [
-    MakeService,
-    FeatureService
+    VehicleService
   ],
   bootstrap: [AppComponent]
 })

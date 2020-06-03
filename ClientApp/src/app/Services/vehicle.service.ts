@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Http } from '@angular/http';
-//import { map } from 'rxjs/add/operator/map';
+//import 'rxjs/add/operator/map';
 import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class MakeService {
+export class VehicleService {
 
   constructor(private http: Http) { }
 
@@ -15,4 +15,10 @@ export class MakeService {
     .pipe(map(res => res.json()));
     //.map(res => res.json());
   }
+
+  getFeatures() {
+    return this.http.get('/api/features')
+    .pipe(map(res => res.json()));
+    //.map(res => res.json());
+  }    
 }
