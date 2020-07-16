@@ -5,6 +5,7 @@ using AutoMapper;
 using vega.Persistence;
 using System.Threading.Tasks;
 using System;
+using Microsoft.EntityFrameworkCore;
 namespace vega.Controllers
 {
     [Route("/api/vehicles")]
@@ -27,7 +28,7 @@ namespace vega.Controllers
 
             var vehicle=mapper.Map<VehicleResource, Vehicle>(vehicleResource);
             vehicle.LastUpdate = DateTime.Now;
-            
+
             context.Vehicles.Add(vehicle);
             await context.SaveChangesAsync();
 
@@ -40,7 +41,10 @@ namespace vega.Controllers
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var vehicle = await context.Vehicles.FindAsync(id);
+            var vehicle = await context.Vehicles.Include(v => v.Features).SingleOrDefaultAsync(v => v.Id == id);
+
+            if (vehicle == null)
+                return NotFound();
 
             mapper.Map<VehicleResource, Vehicle>(vehicleResource, vehicle);
             vehicle.LastUpdate = DateTime.Now;
@@ -49,6 +53,32 @@ namespace vega.Controllers
 
             var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
             return Ok(result);
+        }        
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteVehicle(int id)
+        {
+            var vehicle = await context.Vehicles.FindAsync(id);
+
+            if (vehicle == null)
+                return NotFound();
+
+            context.Remove(vehicle);
+            await context.SaveChangesAsync();
+
+            return Ok(id);
+        }
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetVehicle(int id)
+        {
+            var vehicle = await context.Vehicles.Include(v => v.Features).SingleOrDefaultAsync(v => v.id == id);
+
+            if (vehicle == null)
+                return NotFound();
+
+            var vehicleResource = mapper.Map<Vehicle, VehicleResource>(vehicle);
+
+            return Ok(vehicleResource);
         }        
     }
 }
